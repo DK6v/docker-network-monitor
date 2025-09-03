@@ -1,0 +1,4 @@
+# Docker environment and secret files
+.env
+.env.*
+.secret*

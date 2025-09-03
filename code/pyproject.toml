@@ -1,0 +1,7 @@
+[project]
+name = "network-monitor"
+version = "1.0.3"
+description = "Network monitoring tool and reporter"
+
+[project.scripts]
+network-monitor = "network_monitor.__main__:main"

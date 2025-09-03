@@ -1,0 +1,38 @@
+services:
+  monitor:
+    container_name: network-monitor
+    image: network-monitor:${VERSION:-latest}
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        - VERSION=${VERSION:-latest}
+    environment:
+    # InfluxDB connection settings
+    - INFLUXDB_HOST=${INFLUXDB_HOST:-localhost}
+    - INFLUXDB_PORT=${INFLUXDB_PORT:-8086}
+    - INFLUXDB_METRIC=${INFLUXDB_METRIC:-network_monitor}
+    # ICMP-requests
+    - PING_ENABLED=true
+    - PING_TARGETS=ya.ru;google.com;
+    # HTTP-requests
+    - HTTP_ENABLED=true
+    - HTTP_TARGETS=ya.ru;google.com;
+    # HTTPS-requests
+    - HTTPS_ENABLED=true
+    - HTTPS_TARGETS=ya.ru;google.com;
+    # Speedtest by Ookla
+    - SPEEDTEST_ENABLED=true
+    - SPEEDTEST_INTERVAL=30m
+    env_file:
+    - path: .secrets
+      required: false
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+
+networks:
+  default:
+    external: true
+    name: docker-internal
