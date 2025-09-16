@@ -7,6 +7,7 @@ services:
       context: .
       args:
         - VERSION=${VERSION:-latest}
+    # command: ["sleep", "600"]
     environment:
     # InfluxDB connection settings
     - INFLUXDB_HOST=${INFLUXDB_HOST:-localhost}
@@ -22,8 +23,12 @@ services:
     - HTTPS_ENABLED=true
     - HTTPS_TARGETS=ya.ru;google.com;
     # Speedtest by Ookla
-    - SPEEDTEST_ENABLED=true
+    - SPEEDTEST_ENABLED=false
     - SPEEDTEST_INTERVAL=30m
+    # IPerf3 server
+    - IPERF3_ENABLED=true
+    - IPERF3_INTERVAL=30m
+    - IPERF3_SERVER=${IPERF3_SERVER:-localhost}
     env_file:
     - path: .secrets
       required: false

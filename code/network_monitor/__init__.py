@@ -4,7 +4,7 @@ Network Monitoring tool (ping, https-requests and speedtest)
 
 __version__ = "1.0.0"
 
-from .checkers import PingChecker, HttpChecker, HttpsChecker, SpeedtestChecker
+from .checkers import PingChecker, HttpChecker, HttpsChecker, SpeedtestChecker, IPerf3Checker
 from .scheduler import Scheduler, ScheduledTask
 
 __all__ = [
@@ -12,6 +12,7 @@ __all__ = [
     'HttpChecker',
     'HttpsChecker',
     'SpeedtestChecker',
+    'IPerf3Checker'
     'Scheduler',
-    'ScheduledTask'
+    'ScheduledTask',
 ]

@@ -9,6 +9,7 @@ from .icmp import PingChecker
 from .http import HttpChecker
 from .https import HttpsChecker
 from .speedtest import SpeedtestChecker
+from .iperf3 import IPerf3Checker
 
 __all__ = [
     'BaseChecker',
@@ -16,4 +17,5 @@ __all__ = [
     'HttpChecker',
     'HttpsChecker',
     'SpeedtestChecker',
+    'IPerf3Checker',
 ]

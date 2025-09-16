@@ -40,8 +40,8 @@ class HttpChecker(BaseChecker):
                 tags={
                     'type': 'http',
                     'method': 'GET',
-                    'url': url,
-                    'result': 'success' if (status_code in expected_status) else 'failed'
+                    'target': url,
+                    'result': 'success' if (status_code in expected_status) else 'failed',
                 },
                 values={
                     'duration': int(duration_ms),

@@ -22,7 +22,7 @@ class PingChecker(BaseChecker):
                         self.bucket,
                         tags={
                             'type': 'ping',
-                            'host': host,
+                            'target': host,
                             'result': 'success',
                         },
                         values={
@@ -35,7 +35,7 @@ class PingChecker(BaseChecker):
                         self.bucket,
                         tags={
                             'type': 'ping',
-                            'host': host,
+                            'target': host,
                             'result': 'timeout',
                         },
                         values={
@@ -49,7 +49,7 @@ class PingChecker(BaseChecker):
                     self.bucket,
                     tags={
                         'type': 'ping',
-                        'host': host,
+                        'target': host,
                         'result': 'failed',
                     },
                     values={

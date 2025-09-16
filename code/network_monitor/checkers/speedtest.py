@@ -68,7 +68,7 @@ class SpeedtestChecker(BaseChecker):
             ping_high = data.get('ping', {}).get('high')
             ping_low = data.get('ping', {}).get('low')
             packet_loss = data.get('packetLoss')
-            server = data.get('server', {}).get('name', 'unknown')
+            host = data.get('server', {}).get('host', 'unknown')
 
             # Convert bits/s to Mbps
             download_mbps = (float(download) * 8 / 1_000_000) if download else 0.0
@@ -81,18 +81,18 @@ class SpeedtestChecker(BaseChecker):
                 self.bucket,
                 tags={
                     'type': 'speedtest',
-                    'server': server,
-                    'result': 'success'
+                    'result': 'success',
                 },
                 values={
-                    'duration': int(duration_ms),
+                    'server': host,
                     'download': round(download_mbps, 2),
                     'upload': round(upload_mbps, 2),
                     'ping_latency': round(ping_latency, 2) if ping_latency else 0,
                     'ping_jitter': round(ping_jitter, 2) if ping_jitter else 0,
                     'ping_high': round(ping_high, 2) if ping_high else 0,
                     'ping_low': round(ping_low, 2) if ping_low else 0,
-                    'packet_loss': round(packet_loss, 2) if packet_loss else 0
+                    'packet_loss': int(packet_loss) if packet_loss else 0,
+                    'duration': int(duration_ms),
                 }
             )
 
@@ -107,10 +107,10 @@ class SpeedtestChecker(BaseChecker):
             self.bucket,
             tags={
                 'type': 'speedtest',
-                'result': 'timeout'
+                'result': 'timeout',
             },
             values={
-                'duration': int(duration_ms)
+                'duration': int(duration_ms),
             }
         )
 
@@ -123,9 +123,9 @@ class SpeedtestChecker(BaseChecker):
             tags={
                 'type': 'speedtest',
                 'result': 'error',
-                'error_type': str(error_type)
             },
             values={
-                'duration': int(duration_ms)
+                'error_type': str(error_type),
+                'duration': int(duration_ms),
             }
         )
