@@ -1,6 +1,6 @@
 [project]
 name = "network-monitor"
-version = "1.0.3"
+version = "1.0.6"
 description = "Network monitoring tool and reporter"
 
 [project.scripts]

@@ -28,7 +28,7 @@ services:
     # IPerf3 server
     - IPERF3_ENABLED=true
     - IPERF3_INTERVAL=30m
-    - IPERF3_SERVER=${IPERF3_SERVER:-localhost}
+    - IPERF3_TARGETS=${IPERF3_TARGETS:-localhost}
     env_file:
     - path: .secrets
       required: false

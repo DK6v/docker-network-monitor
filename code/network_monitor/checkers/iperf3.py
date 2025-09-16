@@ -16,34 +16,32 @@ class IPerf3Checker(BaseChecker):
         max_timeout_secs = self.get_timeout('IPERF3_TIMEOUT', '30s')
         duration_secs = self.get_timeout('IPERF3_DURATION', '10s')
         jobs = os.environ.get('IPERF3_JOBS', '1')
-        server = os.environ.get('IPERF3_SERVER')
 
-        if not server:
-            print("** iperf3 server not specified (IPERF3_SERVER environment variable)")
-            self.send_error_metrics(time.time(), "server_not_specified")
-            return self.get_timeout('IPERF3_INTERVAL', '1h')
+        targets = self.get_targets('IPERF3_TARGETS')
 
-        start_time = time.time()
-        data, success = self.run_test('upload', server, max_timeout_secs, duration_secs, jobs)
-        if success:
-            self.send_upload_metrics(data, start_time, server)
-        else:
-            return interval_secs
+        for server in targets:
 
-        start_time = time.time()
-        data, success = self.run_test('download', server, max_timeout_secs, duration_secs, jobs)
-        if success:
-            self.send_download_metrics(data, start_time, server)
-        else:
-            return interval_secs
+            start_time = time.time()
+            data, success = self.run_test('upload', server, max_timeout_secs, duration_secs, jobs)
+            if success:
+                self.send_upload_metrics(data, start_time, server)
+            else:
+                break
 
+            start_time = time.time()
+            data, success = self.run_test('download', server, max_timeout_secs, duration_secs, jobs)
+            if success:
+                self.send_download_metrics(data, start_time, server)
+            else:
+                break
+ 
         print("All tests completed successfully")
         return interval_secs
 
     def run_test(self, direction: str, server: str, max_timeout_secs: int, duration_secs: int, jobs: str) -> tuple:
         """Run iperf3 test with specified direction and return data and success status"""
         try:
-            print(f"Running {direction} test to server {server} using {jobs} parallel connection(s)...")
+            print(f"Running {direction} test to server {server} using {jobs} connection(s)...")
 
             if direction == 'upload':
                 cmd = f"iperf3 -c {server} -J --time {duration_secs} -P {jobs}"
@@ -91,13 +89,6 @@ class IPerf3Checker(BaseChecker):
         duration_ms = (time.time() - start_time) * 1000  # ms
 
         try:
-            # Get connection info
-            connected_list = data.get('start', {}).get('connected', [])
-            if connected_list:
-                remote_host = connected_list[0].get('remote_host', server)
-            else:
-                remote_host = server
-
             # Parse upload test results
             end_data = data.get('end', {})
             result_data = end_data.get('sum_sent', {})
@@ -119,7 +110,6 @@ class IPerf3Checker(BaseChecker):
                     'server': server,
                 },
                 values={
-                    'server': remote_host,
                     'bandwidth': round(bandwidth_mbps, 2),
                     'retransmits': retransmits,
                     'duration': int(duration_ms),
@@ -135,13 +125,6 @@ class IPerf3Checker(BaseChecker):
         duration_ms = (time.time() - start_time) * 1000  # ms
 
         try:
-            # Get connection info
-            connected_list = data.get('start', {}).get('connected', [])
-            if connected_list:
-                remote_host = connected_list[0].get('remote_host', server)
-            else:
-                remote_host = server
-
             # Parse download test results
             end_data = data.get('end', {})
             result_data = end_data.get('sum_received', {})
@@ -164,7 +147,6 @@ class IPerf3Checker(BaseChecker):
                     'server': server,
                 },
                 values={
-                    'server': remote_host,
                     'bandwidth': round(bandwidth_mbps, 2),
                     'retransmits': retransmits,
                     'duration': int(duration_ms),
@@ -174,36 +156,3 @@ class IPerf3Checker(BaseChecker):
         except Exception as e:
             print(f"Failed to send iperf3 download metrics: {e}")
             print(f"Data received: {json.dumps(data, indent=2) if 'data' in locals() else 'No data available'}")
-
-    def send_timeout_metrics(self, start_time: float, direction: str) -> None:
-        """Send timeout metrics for specific direction"""
-        duration_ms = (time.time() - start_time) * 1000
-
-        self.client.metric(
-            self.bucket,
-            tags={
-                'type': 'iperf3',
-                'direction': direction,
-                'result': 'timeout',
-            },
-            values={
-                'duration': int(duration_ms),
-            }
-        )
-
-    def send_error_metrics(self, start_time: float, error_type: str, direction: str) -> None:
-        """Send error metrics for specific direction"""
-        duration_ms = (time.time() - start_time) * 1000
-
-        self.client.metric(
-            self.bucket,
-            tags={
-                'type': 'iperf3',
-                'direction': direction,
-                'result': 'error',
-            },
-            values={
-                'error_type': str(error_type),
-                'duration': int(duration_ms),
-            }
-        )
