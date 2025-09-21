@@ -5,7 +5,8 @@ import signal
 import time
 
 from .scheduler import Scheduler
-from .checkers import PingChecker, HttpChecker, HttpsChecker, SpeedtestChecker, IPerf3Checker
+from .checkers import PingChecker, HttpChecker, HttpsChecker
+from .checkers import SpeedtestChecker, IPerfChecker, IPerf3Checker
 
 def main() -> int:
     """Application entry point"""
@@ -16,6 +17,7 @@ def main() -> int:
     scheduler.add_checker(HttpChecker(), initial_delay=5)
     scheduler.add_checker(HttpsChecker(), initial_delay=5)
     scheduler.add_checker(SpeedtestChecker(), initial_delay=10)
+    scheduler.add_checker(IPerfChecker(), initial_delay=10)
     scheduler.add_checker(IPerf3Checker(), initial_delay=10)
 
     # Setup signal handlers for graceful shutdown

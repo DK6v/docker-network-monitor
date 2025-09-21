@@ -7,26 +7,29 @@ services:
       context: .
       args:
         - VERSION=${VERSION:-latest}
-    # command: ["sleep", "600"]
     environment:
     # InfluxDB connection settings
     - INFLUXDB_HOST=${INFLUXDB_HOST:-localhost}
     - INFLUXDB_PORT=${INFLUXDB_PORT:-8086}
     - INFLUXDB_METRIC=${INFLUXDB_METRIC:-network_monitor}
     # ICMP-requests
-    - PING_ENABLED=true
+    - PING_ENABLED=false
     - PING_TARGETS=ya.ru;google.com;
     # HTTP-requests
-    - HTTP_ENABLED=true
+    - HTTP_ENABLED=false
     - HTTP_TARGETS=ya.ru;google.com;
     # HTTPS-requests
-    - HTTPS_ENABLED=true
+    - HTTPS_ENABLED=false
     - HTTPS_TARGETS=ya.ru;google.com;
     # Speedtest by Ookla
     - SPEEDTEST_ENABLED=false
     - SPEEDTEST_INTERVAL=30m
+    # IPerf server
+    - IPERF_ENABLED=true
+#    - IPERF_INTERVAL=45m
+    - IPERF_TARGETS=${IPERF_TARGETS:-localhost}
     # IPerf3 server
-    - IPERF3_ENABLED=true
+    - IPERF3_ENABLED=false
     - IPERF3_INTERVAL=30m
     - IPERF3_TARGETS=${IPERF3_TARGETS:-localhost}
     env_file:

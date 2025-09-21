@@ -16,6 +16,7 @@ RUN \
     gnupg \
     ca-certificates \
     iputils-ping \
+    iperf \
     iperf3 \
     ; \
   update-ca-certificates
